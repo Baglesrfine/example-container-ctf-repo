@@ -22,28 +22,7 @@ This repo is not production code — it's a learning/demo repository.
 
 ## Build and run the examples
 
-Below are simple commands to build and run the example container images. Run these from the repository root.
-
-Build image for `example-folder-1`:
-
-```
-docker build -f example-folder-1/example_dockerfile -t example-folder-1:latest example-folder-1
-```
-
-Run the image interactively (example):
-
-```
-docker run --rm -it example-folder-1:latest
-```
-
-Repeat for `example-folder-2`:
-
-```
-docker build -f example-folder-2/example_dockerfile -t example-folder-2:latest example-folder-2
-docker run --rm -it example-folder-2:latest
-```
-
-If the images expect ports or volumes, add `-p` or `-v` flags as needed. Inspect `example_entrypoint.sh` and `example_welcome_message.sh` to see what the container does.
+ - You can do this by going to the ctf.cyberstout.org admin page and testing the linux basics challenges to see how they work.
 
 ## Developing / Iterating
 
