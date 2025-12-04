@@ -1,0 +1,50 @@
+FROM ubuntu:22.04
+
+# 1. Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl vim nano git tini \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install ttyd
+ADD https://github.com/tsl0922/ttyd/releases/download/1.7.3/ttyd.x86_64 /usr/bin/ttyd
+RUN chmod +x /usr/bin/ttyd
+
+# 2. Setup User
+RUN useradd -m -s /bin/bash ctfplayer
+WORKDIR /home/ctfplayer
+
+# 3. Install the Lesson
+# Copy our fancy welcome script
+COPY welcome_message.sh /usr/local/bin/welcome_message.sh
+RUN chmod +x /usr/local/bin/welcome_message.sh
+
+# Force it to run whenever the user opens the shell
+# We add it to .bashrc so it prints immediately
+RUN echo "/usr/local/bin/welcome_message.sh" >> /home/ctfplayer/.bashrc
+
+# 4. Lockdown
+# Remove write access to home dir so they focus on the task
+RUN chown -R root:root /home/ctfplayer && \
+    chmod -R 555 /home/ctfplayer
+
+# 5. Entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/usr/bin/tini", "--", "/entrypoint.sh"]
+
+# --------------------------------------------------------
+# SECURITY HARDENING: REMOVE DANGEROUS TOOLS
+# --------------------------------------------------------
+# 1. Uninstall downloaders so they can't fetch malware
+RUN rm -f /usr/bin/curl /usr/bin/wget /usr/bin/nc /usr/bin/netcat
+
+# 2. Uninstall compilers so they can't build exploits
+RUN rm -f /usr/bin/gcc /usr/bin/g++ /usr/bin/make /usr/bin/dpkg /usr/bin/apt /usr/bin/apt-get
+
+# 3. Uninstall scripting languages (Optional - careful if your challenges need them)
+#    For "Linux Basics", they don't need Python or Perl.
+RUN rm -f /usr/bin/python* /usr/bin/perl* /usr/bin/php*
+
+# 4. Remove SSH and other network tools
+RUN rm -f /usr/bin/ssh /usr/bin/telnet /usr/bin/nmap

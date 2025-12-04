@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  linux_challenge:
+    image: ghcr.io/baglesrfine/linux-cli-pt1:latest
+    ports:
+      - 80
+    environment:
+      - FLAG=$FLAG
+# --- SECURITY HARDENING START ---
+
+    # 1. Resource Limits (Anti-Fork Bomb)
+    #    Prevents a user from eating 100% of your server's CPU/RAM.
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'   # Max 50% of one core
+          memory: 128M   # Max 128MB RAM
+          pids: 50       # Max 50 processes (Stops fork bombs instantly)
+
+    # --- SECURITY HARDENING END ---
